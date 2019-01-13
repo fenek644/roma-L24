@@ -33,7 +33,7 @@ post '/visit' do
       :phone => "Введите номер телефона",
       :date_time => "Введите дату и время посещения"
   }
-  
+
   @error = hh.select {|key, | params[key] == ""}.values.join(", ")
 
   if @error != ""
