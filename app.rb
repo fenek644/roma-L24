@@ -28,10 +28,19 @@ post '/visit' do
   @master = params[:master]
   @color = params[:colorpicker]
 
-  if @user_name == ""
-    @error =  "Введите имя!"
-    return erb :visit
+  hh = {
+      :username => "Введите имя",
+      :phone => "Введите номер телефона",
+      :date_time => "Введите дату и время посещения"
+  }
+
+  hh.each do | key, value |
+    if params[key] == ''
+      @error = value
+      return erb :visit
+    end
   end
+  
 
   f = File.open './public/user.txt', 'a'
   f.puts "User: #{@user_name}, Phone: #{@phone}, Date and Time: #{@date_time} . Ваш мастер - #{@master}. "
