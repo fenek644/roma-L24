@@ -7,6 +7,7 @@ get '/' do
 end
 
 get '/about' do
+  # @error = "something wrong!!!"
 	erb :about
 end
 
@@ -26,6 +27,11 @@ post '/visit' do
 
   @master = params[:master]
   @color = params[:colorpicker]
+
+  if @user_name == ""
+    @error =  "Введите имя!"
+    return erb :visit
+  end
 
   f = File.open './public/user.txt', 'a'
   f.puts "User: #{@user_name}, Phone: #{@phone}, Date and Time: #{@date_time} . Ваш мастер - #{@master}. "
