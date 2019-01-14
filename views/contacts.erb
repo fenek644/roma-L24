@@ -6,12 +6,12 @@
 <form action="/contacts" method="POST">
   <div class="form-group">
     <label for="exampleInputEmail1">Ваша электронная почта</label>
-    <input name="email" type="text" class="form-control"  placeholder="Введите электронный адрес">
+    <input name="email" type="text" class="form-control"  placeholder="Введите электронный адрес" value="<%= @email %>">
   </div>
 
   <div class="form-group">
     <label >Ваше сообщение</label>
-    <textarea name="message" type="text" class="form-control" placeholder="Введите сообщение" ></textarea>
+    <textarea name="message" type="text" class="form-control" placeholder="Введите сообщение" ><%= @message %></textarea>
   </div>
 
 
