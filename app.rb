@@ -1,9 +1,14 @@
 require 'rubygems'
 require 'sinatra'
 require 'sinatra/reloader'
+require 'pony'
 
 get '/' do
 	erb "Hello! <a href=\"https://github.com/bootstrap-ruby/sinatra-bootstrap\">Original</a> pattern has been modified for <a href=\"http://rubyschool.us/\">Ruby School</a>"			
+end
+
+get '/visit_mess' do
+	erb :visit_mess
 end
 
 get '/about' do
@@ -17,6 +22,10 @@ get '/visit' do
 
 get '/contacts' do
 	erb :contacts
+end
+
+get '/contacts_mess' do
+  erb :contacts_mess
 end
 
 
@@ -74,7 +83,89 @@ post '/contacts' do
   f.puts "email: #{@email}, Сообщение: #{@message}. "
   f.close
 
-  erb "Спасибо за оращение, в ближайшее время вам ответят"
+
+  #  отправляем письмо администратору(диспечеру) по сообщениям
+
+  Pony.mail({
+                :subject => "Обращение с сайта парикмахерской!", # задаем тему письма
+                :body => "Клиент с адресом - #{@email} прислал следующее сообщение - \"#{@message}\"",  # задаем содержимое письма, его тело
+                :to => "email администратора обращений", # кому отправить письмо
+                :from => "специальный (рабочий) email сайта", # наш обратный адрес, от кого письмо
+
+
+
+                # Ниже идут опции класса Pony для почтового ящика на Mail.ru
+                # подробнее об опциях Pony см. документацию https://github.com/benprew/pony
+
+                # :via => :smtp,
+                # :via_options => {
+                #     :address => 'smtp.mail.ru', # это хост, сервер отправки почты
+                #     :port => '465', # порт
+                #     :tls => true,   # если сервер работает в режиме TLS
+                #     :user_name => my_mail, # используем наш адрес почты как логин
+                #     :password => password, # задаем введенный в консоли пароль
+                #     :authentication => :plain  # "обычный" тип авторизации по паролю
+                # }
+
+                # Это опции класса Pony для почтового ящика Gmail.com
+                #
+                :via => :smtp,
+                    :via_options => {
+                    :address => 'smtp.gmail.com',
+                    :port => '587',
+                    :enable_starttls_auto => true,
+                    :user_name => "специальный (рабочий) email сайта", # используем наш адрес почты как логин
+                    :password => "паспорт рабочего email-а сайта" ,# задаем введенный в консоли пароль
+                    :authentication => :plain,
+                }
+
+
+
+                # Это опции класса Pony для почтового ящика на Яндексе
+                #
+                # :via => :smtp,
+                # :via_options => {
+                #     :address => 'smtp.yandex.ru',
+                #     :port => '465',
+                #     :enable_starttls_auto => true,
+                #     :tls => true,
+                #     :user_name => my_mail, # используем наш адрес почты как логин
+                #     :password => password, # задаем введенный в консоли пароль
+                #     :authentication => :plain,
+                # }
+
+
+                # о том какие опции нужно задавать для вашего почтового ящика,
+                # если это не мэйл и не gmail - см. документацию вашего почтового провайдера
+                # или не поленитесь и заведите тестовый ящик на мэйл.ру или gmail, ради такого дела :)
+                })
+  #  отправляем автоматический ответ обратившемуся на сайт парикмахерской.
+
+  Pony.mail({
+                :subject => "Авто ответ на обращение с сайта парикмахерской!", # задаем тему письма
+                :body => "Здравствуйте уважаемый обладатель адреса  #{@email}! Это парикмахерская, мы получили ваше обращение.
+В ближайшее время - ответим.",  # задаем содержимое письма, его тело
+                :to => @email, # кому отправить письмо
+                :from => "специальный (рабочий) email сайта", # наш обратный адрес, от кого письмо
+
+
+
+
+                :via => :smtp,
+                :via_options => {
+                    :address => 'smtp.gmail.com',
+                    :port => '587',
+                    :enable_starttls_auto => true,
+                    :user_name => "специальный (рабочий) email сайта", # используем наш адрес почты как логин
+                    :password => "паспорт рабочего email-а сайта", # задаем введенный в консоли пароль
+                    :authentication => :plain,
+                }
+            })
+
+
+  erb :contacts_mess
+
+  # erb "Спасибо за обращение, в ближайшее время вам ответят"
   # erb :contacts
 end
 
